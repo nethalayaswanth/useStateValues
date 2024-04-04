@@ -41,7 +41,7 @@ describe("useStateValues", () => {
     };
     const { getByText } = render(<Test />);
     await waitFor(() => {
-      const el = getByText("10hell");
+      const el = getByText("10hello");
     });
   });
 

@@ -1,30 +1,89 @@
-# React + TypeScript + Vite
+# Use-State-Values
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A react hook which provides simple abstraction over state to push state updates to  leaf components
 
-Currently, two official plugins are available:
+create state anywhere and render the state only in the components which depend on it
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Installation
 
-## Expanding the ESLint configuration
+```sh
+npm install @monynethala/useStateValues
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-    project: ["./tsconfig.json", "./tsconfig.node.json"],
-    tsconfigRootDir: __dirname,
-  },
-};
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Api
+
+```js
+class StateValue<V = any> {
+    private current;
+    private prev;
+    private readonly subscribers;
+    constructor(initialValue?: V);
+    get(): V | undefined;
+    set(current: V | ((prevValue: V) => V)): V;
+    subscribe(updater: Updater<V>, call?: boolean): () => void;
+    unsubscribe(updater: Updater<V>): void;
+    getPrevious(): V | undefined;
+    private notifySubscribers;
+}
+
+type StateValues<T extends object> = {
+    [K in keyof T]: T extends StateValue<infer U> ? T : StateValue<T>;
+};
+
+type Valid<T> = {
+     [P in keyof T]: T[P] extends Primitive | StateValue<any> ? T[P] : never;
+ };
+
+function useStateValues<T extends Valid<T>>(initialValue: T): [StateValueState<T>, StateValues<T>];
+
+```
+
+# Basic Usage
+
+```jsx
+
+import useStateValues from '@monynethala/useStateValues'
+
+function App() {
+const Nested = ({ prop }: { prop: StateValue<number> }) => {
+  
+  const [renderState, stateValues] = useStateValues({ x: prop });
+  const { x } = renderState;
+  return (
+      <div>{x}</div>
+  );
+};
+
+export default function App() {
+  const [renderState, stateValues] = useStateValues({ x: 0, y: "mony" });
+
+  // Destructure renderState to convert StateValue to state
+  const { x } = renderState;
+
+  const intervalRef = useRef<number | undefined>();
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      values.y.setCurrent((x) => x + 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalRef.current);
+    };
+  }, []);
+
+ // Component rerenders only when the 'x' changes
+
+  return (
+    <div className="App">
+      <div>{x}</div>
+      <Nested prop={values.y} />
+    </div>
+  );
+}
+
+
+```
+

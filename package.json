@@ -1,5 +1,5 @@
 {
-  "name": "@monynethala/useStateValues",
+  "name": "@monynethala/use-state-values",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/use-state-values.js",

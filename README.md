@@ -7,7 +7,7 @@ create state anywhere and render the state only in the components which depend o
 ## Installation
 
 ```sh
-npm install @monynethala/useStateValues
+npm install @monynethala/use-state-values
 
 ```
 
@@ -46,7 +46,7 @@ function useStateValues<T extends Valid<T>>(initialValue: T): [StateValueState<T
 
 import useStateValues from '@monynethala/useStateValues'
 
-function App() {
+
 const Nested = ({ prop }: { prop: StateValue<number> }) => {
   
   const [renderState, stateValues] = useStateValues({ x: prop });

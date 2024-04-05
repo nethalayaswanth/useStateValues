@@ -44,7 +44,7 @@ function useStateValues<T extends Valid<T>>(initialValue: T): [StateValueState<T
 
 ```jsx
 
-import useStateValues from '@monynethala/useStateValues'
+import useStateValues from '@monynethala/use-state-values'
 
 
 const Nested = ({ prop }: { prop: StateValue<number> }) => {

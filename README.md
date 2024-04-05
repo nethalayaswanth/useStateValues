@@ -2,7 +2,7 @@
 
 A react hook which provides simple abstraction over state to push state updates to  leaf components
 
-create state anywhere and render the state only in the components which depend on it
+create state anywhere and render it only in the components that need it
 
 ## Installation
 
